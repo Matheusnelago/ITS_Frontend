@@ -257,20 +257,6 @@ function Sidebar({ collapsed, currentPage, onPageChange, onLogout }) {
         </div>
       </div>
 
-      {/* Quick Stats - Only show when not collapsed */}
-      <div className={`overflow-hidden transition-all duration-300 ease-in-out ${collapsed ? 'max-h-0 opacity-0' : 'max-h-40 opacity-100'} px-4 py-3 border-b border-slate-300/50 dark:border-slate-800`}>
-        <div className='grid grid-cols-2 gap-2'>
-          <div className='bg-linear-to-br from-blue-500 to-blue-600 rounded-lg p-2 text-white text-center'>
-            <p className='text-lg font-bold'>12</p>
-            <p className='text-[10px] opacity-80'>Officers</p>
-          </div>
-          <div className='bg-linear-to-br from-emerald-500 to-emerald-600 rounded-lg p-2 text-white text-center'>
-            <p className='text-lg font-bold'>48</p>
-            <p className='text-[10px] opacity-80'>Tickets</p>
-          </div>
-        </div>
-      </div>
-
       {/* navigations */}
       <nav className='flex-1 p-4 space-y-2 overflow-y-auto'>
         <div className={`overflow-hidden transition-all duration-300 ease-in-out ${collapsed ? 'max-h-0 opacity-0' : 'max-h-6 opacity-100'}`}>
