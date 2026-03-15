@@ -1094,10 +1094,10 @@ export default function JudgeDashboard() {
         <div className="flex flex-wrap items-center justify-between gap-4 relative z-10">
           <div className="flex items-center gap-4">
             <span className="px-4 py-1.5 bg-yellow-500 text-amber-900 text-sm font-bold rounded-lg shadow-lg flex items-center gap-2">
-              <Scale className="w-4 h-4" /> JUDICIARY
+              <Scale className="w-4 h-4" /> Traffic Court Magistrate
             </span>
             <div>
-              <h1 className="text-2xl font-bold">Judge Dashboard</h1>
+              <h1 className="text-2xl font-bold">Traffic Court Magistrate Dashboard</h1>
               <p className="text-amber-100 text-sm">
                 {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
               </p>
