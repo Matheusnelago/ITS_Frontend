@@ -1,51 +1,10 @@
-import React, { useState } from 'react';
-import { Bell, X, Check, Trash2, AlertCircle, Info, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Bell, X, Check, Trash2, AlertCircle, Info, CheckCircle, RefreshCw } from 'lucide-react';
+import { getJudgeNotifications, markJudgeNotificationRead } from '../../Axios';
 
 const NotificationsPage = () => {
-  // Sample notifications data - in a real app, this would come from an API
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: 'success',
-      title: 'Ticket Issued Successfully',
-      message: 'Ticket #TK-2024-001 has been issued to John Doe.',
-      time: '2 minutes ago',
-      read: false
-    },
-    {
-      id: 2,
-      type: 'info',
-      title: 'New Case Assigned',
-      message: 'You have been assigned a new case: Case #CASE-2024-045.',
-      time: '1 hour ago',
-      read: false
-    },
-    {
-      id: 3,
-      type: 'warning',
-      title: 'Payment Reminder',
-      message: 'Payment for Ticket #TK-2024-003 is due in 3 days.',
-      time: '3 hours ago',
-      read: true
-    },
-    {
-      id: 4,
-      type: 'success',
-      title: 'Profile Updated',
-      message: 'Your profile has been updated successfully.',
-      time: '1 day ago',
-      read: true
-    },
-    {
-      id: 5,
-      type: 'info',
-      title: 'System Update',
-      message: 'The system will be under maintenance on Sunday at 2:00 AM.',
-      time: '2 days ago',
-      read: true
-    }
-  ]);
-
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
 
   const getIcon = (type) => {
@@ -67,21 +26,51 @@ const NotificationsPage = () => {
     return notif.type === filter;
   });
 
-  const markAsRead = (id) => {
-    setNotifications(notifications.map(notif =>
-      notif.id === id ? { ...notif, read: true } : notif
-    ));
-  };
 
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(notif => ({ ...notif, read: true })));
+
+  // Fetch notifications
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      setLoading(true);
+      const result = await getJudgeNotifications();
+      if (result.success !== false && result.data) {
+        setNotifications(result.data || []);
+      }
+      setLoading(false);
+    };
+
+    fetchNotifications();
+  }, []);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const markAsRead = async (id) => {
+    const result = await markJudgeNotificationRead(id);
+    if (result.success) {
+      setNotifications(notifications.map(notif =>
+        notif.id === id ? { ...notif, read: true } : notif
+      ));
+    }
   };
 
   const deleteNotification = (id) => {
     setNotifications(notifications.filter(notif => notif.id !== id));
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const markAllAsRead = async () => {
+    const unread = notifications.filter(n => !n.read);
+    for (const notif of unread) {
+      await markAsRead(notif.id);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -93,12 +82,21 @@ const NotificationsPage = () => {
             You have {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
           </p>
         </div>
-        <button
-          onClick={markAllAsRead}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Mark All as Read
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={markAllAsRead}
+            disabled={unreadCount === 0}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          >
+            Mark All Read
+          </button>
+          <button
+            onClick={() => window.location.reload()}
+            className="p-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg"
+          >
+            <RefreshCw className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -154,15 +152,13 @@ const NotificationsPage = () => {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  {!notification.read && (
-                    <button
-                      onClick={() => markAsRead(notification.id)}
-                      className="p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                      title="Mark as read"
-                    >
-                      <Check className="w-4 h-4" />
-                    </button>
-                  )}
+                  <button
+                    onClick={() => markAsRead(notification.id)}
+                    className="p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                    title="Mark as read"
+                  >
+                    <Check className="w-4 h-4" />
+                  </button>
                   <button
                     onClick={() => deleteNotification(notification.id)}
                     className="p-2 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"

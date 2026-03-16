@@ -60,7 +60,7 @@ const judgeMenuItems = [
   {
     id: 'judge_dashboard',
     icon: Scale,
-    label: 'Judge Dashboard',
+    label: 'Magistrate Dashboard',
     active: false,
     roles: ['judiciary'],
   },

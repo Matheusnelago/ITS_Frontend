@@ -54,7 +54,7 @@ function Header({ onToggleSidebar, toggleDarkMode, darkMode, currentPage, onPage
             'user_management': 'User Management',
             'natis_admin': 'NaTIS Dashboard',
             'natis_registration': 'Vehicle & Driver Registration',
-            'judge_dashboard': 'Judge Dashboard',
+            'judge_dashboard': 'Court Magistrate Dashboard',
             'defendant_files': 'Defendant Files',
             'settings': 'Settings',
             'notifications': 'Notifications',
@@ -71,7 +71,7 @@ function Header({ onToggleSidebar, toggleDarkMode, darkMode, currentPage, onPage
         if (isOfficer) {
             crumbs[0] = { id: 'officer_dashboard', label: 'Officer Dashboard', path: 'officer_dashboard' };
         } else if (isJudiciary) {
-            crumbs[0] = { id: 'judge_dashboard', label: 'Judge Dashboard', path: 'judge_dashboard' };
+            crumbs[0] = { id: 'judge_dashboard', label: 'Magistrate Dashboard', path: 'judge_dashboard' };
         } else if (isNaTISAdmin) {
             crumbs[0] = { id: 'natis_admin', label: 'NaTIS Dashboard', path: 'natis_admin' };
         } else if (isMinistry) {
@@ -84,7 +84,7 @@ function Header({ onToggleSidebar, toggleDarkMode, darkMode, currentPage, onPage
         if (currentPage === 'overview') crumbs.push({ id: 'overview', label: 'Overview', path: 'overview' });
         if (currentPage === 'reports') crumbs.push({ id: 'reports', label: 'Reports', path: 'reports' });
         if (currentPage === 'statistics') crumbs.push({ id: 'statistics', label: 'Statistics', path: 'statistics' });
-        if (currentPage === 'judge_dashboard') crumbs.push({ id: 'judge_dashboard', label: 'Judge Dashboard', path: 'judge_dashboard' });
+        if (currentPage === 'judge_dashboard') crumbs.push({ id: 'judge_dashboard', label: 'Court Magistrate Dashboard', path: 'judge_dashboard' });
         if (currentPage === 'defendant_files') crumbs.push({ id: 'defendant_files', label: 'Defendant Files', path: 'defendant_files' });
         if (currentPage === 'natis_admin') crumbs.push({ id: 'natis_admin', label: 'NaTIS Dashboard', path: 'natis_admin' });
         if (currentPage === 'natis_registration') {

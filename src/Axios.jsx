@@ -28,7 +28,9 @@ const AUDIT_LOGS_URL = `${baseURL}audit-logs/`
 const JUDGE_SCHEDULE_URL = `${baseURL}judge/schedule/`
 const JUDGE_CASES_URL = `${baseURL}judge/cases/`
 const JUDGE_CALENDAR_URL = `${baseURL}judge/calendar/`
+const JUDGE_NOTIFICATIONS_URL = `${baseURL}judge/notifications/`
 const JUDGE_STATS_URL = `${baseURL}judge/statistics/`
+const JUDGE_MARK_READ_URL = `${baseURL}judge/notifications/`
 const USERS_URL = `${baseURL}users/`
 
 // Token storage keys
@@ -731,6 +733,24 @@ export const scheduleJudgeCourtDate = async (courtDateData) => {
     try {
         const response = await api.post(JUDGE_CALENDAR_URL, courtDateData)
         return { success: true, data: response.data }
+    } catch (error) {
+        return { success: false, error: error.response?.data || error.message }
+    }
+}
+
+export const getJudgeNotifications = async () => {
+    try {
+        const response = await api.get(JUDGE_NOTIFICATIONS_URL)
+        return response.data
+    } catch (error) {
+        return { success: false, error: error.response?.data || error.message }
+    }
+}
+
+export const markJudgeNotificationRead = async (notificationId) => {
+    try {
+        const response = await api.post(`${JUDGE_MARK_READ_URL}${notificationId}/read/`)
+        return response.data
     } catch (error) {
         return { success: false, error: error.response?.data || error.message }
     }

@@ -29,12 +29,14 @@ import {
 import {
   getJudgeCases,
   getJudgeCalendar,
+  getJudgeNotifications,
   getJudgeStatistics,
   getJudgeCaseDetail,
   scheduleJudgeCourtDate,
   updateCaseJudgment,
   lookupTicket,
 } from '../../Axios'
+import NotificationsPage from '../NotificationsPage/NotificationsPage.jsx'
 
 // Status badge colors
 const statusColors = {
@@ -839,6 +841,8 @@ export default function JudgeDashboard() {
   const [customEvents, setCustomEvents] = useState([])
   const [statistics, setStatistics] = useState(null)
   const [error, setError] = useState(null)
+  const [notifications, setNotifications] = useState([])
+  const [unreadCount, setUnreadCount] = useState(0)
 
   // Filters & Pagination
   const [statusFilter, setStatusFilter] = useState('all')
@@ -913,10 +917,11 @@ export default function JudgeDashboard() {
       setLoading(true)
       setError(null)
 
-      const [casesData, calendarData, statsData] = await Promise.all([
+      const [casesData, calendarData, statsData, notificationsData] = await Promise.all([
         getJudgeCases(statusFilter),
         getJudgeCalendar(),
-        getJudgeStatistics()
+        getJudgeStatistics(),
+        getJudgeNotifications()
       ])
 
       if (casesData.success !== false) {
@@ -929,6 +934,11 @@ export default function JudgeDashboard() {
 
       if (statsData.success !== false) {
         setStatistics(statsData.data || statsData)
+      }
+
+      if (notificationsData.success !== false && notificationsData.data) {
+        setNotifications(notificationsData.data || [])
+        setUnreadCount(notificationsData.unread_count || 0)
       }
     } catch (err) {
       console.error('Error fetching judge data:', err)
@@ -1061,7 +1071,7 @@ export default function JudgeDashboard() {
   const renderStatCard = (stat) => (
     <div
       key={stat.title}
-      className={`group relative overflow-hidden rounded-xl bg-gradient-to-br ${stat.gradientFrom} ${stat.gradientTo} p-4 text-white shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02]`}
+      className={`group relative overflow-hidden rounded-xl bg-linear-to-br ${stat.gradientFrom} ${stat.gradientTo} p-4 text-white shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02]`}
     >
       <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
       <div className="relative z-10">
@@ -1113,6 +1123,19 @@ export default function JudgeDashboard() {
               Dashboard
             </button>
             <button
+              onClick={() => setView('notifications')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors relative ${
+                view === 'notifications' ? 'bg-white/20' : 'hover:bg-white/10'
+              }`}
+            >
+              Notifications
+              {unreadCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+            </button>
+            <button
               onClick={() => setView('cases')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 view === 'cases' ? 'bg-white/20' : 'hover:bg-white/10'
@@ -1136,6 +1159,11 @@ export default function JudgeDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
         {stats.map(renderStatCard)}
       </div>
+
+      {/* Notifications View */}
+      {view === 'notifications' && (
+        <NotificationsPage />
+      )}
 
       {/* Dashboard View */}
       {view === 'dashboard' && (
